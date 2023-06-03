@@ -2,6 +2,7 @@
 using PrivsXYZ.MVC.Database;
 using PrivsXYZ.MVC.Database.Entites;
 using PrivsXYZ.MVC.Helpers;
+using PrivsXYZ.MVC.Models;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -16,7 +17,7 @@ namespace PrivsXYZ.MVC.Services
             _dbContext = dbContext;
         }
 
-        public async Task<string> CreateAndEncryptMessage(string message, string ipv4, string ipv6, string hostname)
+        public async Task<string> CreateAndEncryptMessage(MessageSendModel model)
         {
             string keyToDecrypt = RandomGeneratorHelper.RandomString(30); //length of key string in URL
 
@@ -25,9 +26,9 @@ namespace PrivsXYZ.MVC.Services
             MessageEntity newMessage = new MessageEntity()
             {
                 CreateDate = DateTime.Now,
-                UploaderIPAddress = ipv4,
-                UploaderHostname = hostname,
-                Message = await Encrypt(message, salt, keyToDecrypt),
+                UploaderIPAddress = model.SenderIPv4Address,
+                UploaderHostname = model.SenderHostname,
+                Message = await Encrypt(model.Message!, salt, keyToDecrypt),
                 Salt = salt
             };
 
@@ -36,10 +37,10 @@ namespace PrivsXYZ.MVC.Services
             return $"{newMessage.Id}@{keyToDecrypt}";
         }
 
-        public async Task<string> DeleteAndDecryptMessage(int id, string key, string ipv4, string hostname)
+        public async Task<string> DeleteAndDecryptMessage(MessageViewModel model)
         {
             var messageEntityInDb =
-                await _dbContext.Message.FirstOrDefaultAsync(f => f.Id == id);
+                await _dbContext.Message.FirstOrDefaultAsync(f => f.Id == model.MessageId);
             if (messageEntityInDb == null)
             {
                 return "Brak wiadomości o tym ID bądź nieprawidłowy klucz!";
@@ -49,7 +50,7 @@ namespace PrivsXYZ.MVC.Services
 
             try
             {
-                decryptedMessage = await Decrypt(messageEntityInDb.Message!, messageEntityInDb.Salt!, key);
+                decryptedMessage = await Decrypt(messageEntityInDb.Message!, messageEntityInDb.Salt!, model.Key!);
             }
             catch (Exception)
             {
@@ -60,8 +61,8 @@ namespace PrivsXYZ.MVC.Services
             {
                 messageEntityInDb.Message = null;
                 messageEntityInDb.Salt = null;
-                messageEntityInDb.ViewerIPAddress = ipv4;
-                messageEntityInDb.ViewerHostname = hostname;
+                messageEntityInDb.ViewerIPAddress = model.ViewerIPv4Address;
+                messageEntityInDb.ViewerHostname = model.ViewerHostname;
                 messageEntityInDb.OpenDate = DateTime.Now;
                 _dbContext.Message.Update(messageEntityInDb);
                 await _dbContext.SaveChangesAsync();
