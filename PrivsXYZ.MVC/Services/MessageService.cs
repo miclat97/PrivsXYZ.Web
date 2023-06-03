@@ -9,12 +9,12 @@ namespace PrivsXYZ.MVC.Services
 {
     public class MessageService : IMessageService
     {
-        //private readonly PrivsXYZDbContext _dbContext;
+        private readonly PrivsXYZDbContext _dbContext;
 
-        //public MessageService(PrivsXYZDbContext dbContext)
-        //{
-        //    _dbContext = dbContext;
-        //}
+        public MessageService(PrivsXYZDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         public async Task<string> CreateAndEncryptMessage(string message, string ipv4, string ipv6, string hostname)
         {
@@ -31,49 +31,48 @@ namespace PrivsXYZ.MVC.Services
                 Salt = salt
             };
 
-            //await _dbContext.Message.AddAsync(newMessage);
-            //await _dbContext.SaveChangesAsync();
+            await _dbContext.Message.AddAsync(newMessage);
+            await _dbContext.SaveChangesAsync();
             return $"{newMessage.Id}@{keyToDecrypt}";
         }
 
         public async Task<string> DeleteAndDecryptMessage(int id, string key, string ipv4, string hostname)
         {
-            //var messageEntityInDb =
-            //    await _dbContext.Message.FirstOrDefaultAsync(f => f.Id == id);
-            //if (messageEntityInDb == null)
-            //{
-            //    return "No message with this ID, or bad key!";
-            //}
+            var messageEntityInDb =
+                await _dbContext.Message.FirstOrDefaultAsync(f => f.Id == id);
+            if (messageEntityInDb == null)
+            {
+                return "Brak wiadomości o tym ID bądź nieprawidłowy klucz!";
+            }
 
-            //string decryptedMessage;
+            string decryptedMessage;
 
-            //try
-            //{
-            //    decryptedMessage = Decrypt(messageEntityInDb.Message, messageEntityInDb.Salt, key);
-            //}
-            //catch (Exception)
-            //{
-            //    return "No message with this ID, or bad key!";
-            //}
+            try
+            {
+                decryptedMessage = await Decrypt(messageEntityInDb.Message!, messageEntityInDb.Salt!, key);
+            }
+            catch (Exception)
+            {
+                return "Brak wiadomości o tym ID bądź nieprawidłowy klucz!";
+            }
 
-            //try
-            //{
-            //    messageEntityInDb.Message = null;
-            //    messageEntityInDb.Salt = null;
-            //    messageEntityInDb.ViewerIPAddress = ipv4;
-            //    messageEntityInDb.ViewerHostname = hostname;
-            //    messageEntityInDb.OpenDate = DateTime.Now;
-            //    _dbContext.Message.Update(messageEntityInDb);
-            //    await _dbContext.SaveChangesAsync();
-            //    return decryptedMessage;
-            //}
-            //catch (Exception)
-            //{
-            //    return
-            //        "Error when trying to delete message from database, please try again or" +
-            //        " contact with administrator.";
-            //}
-            throw new NotImplementedException();
+            try
+            {
+                messageEntityInDb.Message = null;
+                messageEntityInDb.Salt = null;
+                messageEntityInDb.ViewerIPAddress = ipv4;
+                messageEntityInDb.ViewerHostname = hostname;
+                messageEntityInDb.OpenDate = DateTime.Now;
+                _dbContext.Message.Update(messageEntityInDb);
+                await _dbContext.SaveChangesAsync();
+                return decryptedMessage;
+            }
+            catch (Exception)
+            {
+                return
+                    "Wystąpił błąd podczas próby usunięcia wiadomości po jej odczytaniu z bazy danych." +
+                    " Spróbuj ponownie.";
+            }
         }
 
 
