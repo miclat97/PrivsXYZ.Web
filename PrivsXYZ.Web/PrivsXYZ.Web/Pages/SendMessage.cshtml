@@ -1,0 +1,32 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "PrivsXYZ";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Wysłano ;)</h1>
+    <center>
+        <h4>Wpisz poniżej treść prywatnej wiadomości</h4>
+        <br /> Następnie otrzymasz link, którego będziesz mógł przekazać odbiorcy wiadomości<br />
+        Odbiorca będzie mógł odczytać wiadomość tylko 1 raz. Po odczytaniu zaszyfrowana wiadomość zostanie usunięta z serwera<br />
+        Dane są szyfrowane algorytmem AES na podstawie klucza wygenerowanego w linku - oznacza to, że nikt - nawet administracja serwisu nie może odczytać Twojej wiadomości<br /><br />
+    </center>
+    <br />
+    <br />
+
+    <form id="form1" method="post" action="SendMessage"
+          enctype="application/x-www-form-urlencoded">
+        <div>
+            <textarea class="form-control"
+                      cols="80"
+                      id="Message"
+                      name="Message"
+                      rows="10"></textarea>
+        </div>
+        <br />
+        <div>
+            <input type="submit" value="Zaszyfruj!" />
+        </div>
+    </form>
+</div>

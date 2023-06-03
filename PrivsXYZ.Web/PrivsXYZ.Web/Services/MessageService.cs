@@ -70,7 +70,8 @@ namespace PrivsXYZ.Web.Services
             catch (Exception)
             {
                 return
-                    "Error when trying to delete message from database, please try again or contact with administrator.";
+                    "Error when trying to delete message from database, please try again or" +
+                    " contact with administrator.";
             }
         }
 
@@ -86,7 +87,8 @@ namespace PrivsXYZ.Web.Services
                 encryptor.KeySize = 256;
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(),
+                        CryptoStreamMode.Write))
                     {
                         cs.Write(clearBytes, 0, clearBytes.Length);
                         cs.Close();
@@ -109,7 +111,8 @@ namespace PrivsXYZ.Web.Services
                 decryptor.KeySize = 256;
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, decryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                    using (CryptoStream cs = new CryptoStream(ms, decryptor.CreateDecryptor(),
+                        CryptoStreamMode.Write))
                     {
                         cs.Write(cipherBytes, 0, cipherBytes.Length);
                         cs.Close();
