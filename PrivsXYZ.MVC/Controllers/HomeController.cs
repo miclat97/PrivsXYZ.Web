@@ -8,13 +8,13 @@ namespace PrivsXYZ.MVC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly IMessageService _messageService;
+        private readonly IClientInfoService _clientInfoService;
 
-        public HomeController(ILogger<HomeController> logger, IMessageService messageService)
+        public HomeController(IMessageService messageService, IClientInfoService clientInfoService)
         {
-            _logger = logger;
             _messageService = messageService;
+            _clientInfoService = clientInfoService;
         }
 
         public async Task<IActionResult> Index()
@@ -26,20 +26,36 @@ namespace PrivsXYZ.MVC.Controllers
             return View();
         }
 
-        public async Task<IActionResult> SendMessage()
+        [HttpPost("SendMessage")]
+        public async Task<IActionResult> SendMessage(MessageSendModel messageModel)
         {
-            return View();
+            try
+            {
+                var userData = _clientInfoService.GetUserData();
+                messageModel.SenderIPv4Address = userData.IPv4;
+                messageModel.SenderHostname = userData.Hostname;
+
+                var endOfLink = await _messageService.CreateAndEncryptMessage(messageModel);
+
+                ViewBag.Link = $"https://privs.xyz/decrypt/{endOfLink}";
+
+                return View();
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Index");
+            }
         }
 
-        public IActionResult Privacy()
+        [HttpGet("IP")]
+        public async Task<IActionResult> Ip()
         {
-            return View();
-        }
+            var userData = _clientInfoService.GetUserData();
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            ViewBag.ipv4 = userData.IPv4;
+            ViewBag.host = userData.Hostname;
+
+            return View();
         }
     }
 }
