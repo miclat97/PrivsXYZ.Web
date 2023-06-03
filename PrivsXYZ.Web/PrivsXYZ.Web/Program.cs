@@ -1,3 +1,5 @@
+using PrivsXYZ.Web.Services;
+
 namespace PrivsXYZ.Web
 {
     public class Program
@@ -8,6 +10,8 @@ namespace PrivsXYZ.Web
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+
+            builder.Services.AddTransient<IMessageService, MessageService>();
 
             var app = builder.Build();
 
