@@ -1,4 +1,6 @@
+using PrivsXYZ.Web.Database;
 using PrivsXYZ.Web.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace PrivsXYZ.Web
 {
@@ -10,6 +12,9 @@ namespace PrivsXYZ.Web
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+
+            builder.Services.AddDbContext<PrivsXYZDbContext>(options =>
+                options.UseMySQL(builder.Configuration.GetConnectionString("Database")));
 
             builder.Services.AddTransient<IMessageService, MessageService>();
 
