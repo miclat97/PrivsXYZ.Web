@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PrivsXYZ.MVC.Database;
 
@@ -10,9 +11,11 @@ using PrivsXYZ.MVC.Database;
 namespace PrivsXYZ.MVC.Migrations
 {
     [DbContext(typeof(PrivsXYZDbContext))]
-    partial class PrivsXYZDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230603192540_MessageEntityNullable")]
+    partial class MessageEntityNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
