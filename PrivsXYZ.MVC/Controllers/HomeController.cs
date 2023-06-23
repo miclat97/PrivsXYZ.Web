@@ -2,7 +2,6 @@
 using PrivsXYZ.MVC.Helpers;
 using PrivsXYZ.MVC.Models;
 using PrivsXYZ.MVC.Services;
-using System.Diagnostics;
 
 namespace PrivsXYZ.MVC.Controllers
 {
@@ -48,7 +47,7 @@ namespace PrivsXYZ.MVC.Controllers
         }
 
         [HttpGet("IP")]
-        public async Task<IActionResult> Ip()
+        public IActionResult Ip()
         {
             var userData = _clientInfoService.GetUserData();
 

@@ -10,5 +10,6 @@ namespace PrivsXYZ.MVC.Database
         }
 
         public DbSet<MessageEntity> Message { get; set; }
+        public DbSet<PhotoEntity> Photo { get; set; }
     }
 }

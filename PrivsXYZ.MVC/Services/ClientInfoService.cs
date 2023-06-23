@@ -18,9 +18,17 @@ namespace PrivsXYZ.MVC.Services
 
             var ipAddressv4 = _httpContextAccessor.HttpContext!.Connection.RemoteIpAddress!.MapToIPv4();
 
-            result.IPv4 = ipAddressv4.ToString();
+            string userAgent = _httpContextAccessor.HttpContext.Request.Headers["User-Agent"].ToString();
+            string operatingSystem = userAgent.Split('(')[1].Split(')')[0];
 
-            result.Hostname = ipAddressv4.ToString();
+
+            result.IPv4 = ipAddressv4.ToString();
+            string[] host = Dns.GetHostEntry(ipAddressv4).HostName.Split('.');
+            result.Hostname = host[0];
+            result.UserAgent = userAgent;
+            result.OperatingSystem = operatingSystem;
+            result.IPv4 = ipAddressv4.ToString();
+            result.Hostname = host[1];
 
             try
             {
