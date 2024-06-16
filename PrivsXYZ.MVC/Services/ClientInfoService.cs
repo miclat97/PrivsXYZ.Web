@@ -12,7 +12,7 @@ namespace PrivsXYZ.MVC.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public ClientInfoModel GetUserData()
+        public ClientInfoModel? GetUserData()
         {
             ClientInfoModel result = new ClientInfoModel();
 
@@ -32,15 +32,15 @@ namespace PrivsXYZ.MVC.Services
 
             try
             {
-                var hostEntry = Dns.GetHostEntry(result.IPv4)!.HostName;
-                if (hostEntry != null)
+                var hostEntry = Dns.GetHostEntry(result.IPv4)?.HostName;
+                if (hostEntry is not null)
                 {
                     result.Hostname = hostEntry;
                 }
             }
             catch
             {
-
+                return null;
             }
 
             return result;

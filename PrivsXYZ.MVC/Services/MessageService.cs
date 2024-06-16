@@ -23,7 +23,7 @@ namespace PrivsXYZ.MVC.Services
 
             var salt = RandomGeneratorHelper.GetRandomSalt(256);
 
-            MessageEntity newMessage = new MessageEntity()
+            MessageEntity newMessage = new()
             {
                 CreateDate = DateTime.Now,
                 UploaderIPAddress = model.SenderIPv4Address,
@@ -34,16 +34,16 @@ namespace PrivsXYZ.MVC.Services
 
             await _dbContext.Message.AddAsync(newMessage);
             await _dbContext.SaveChangesAsync();
-            return $"{newMessage.Id}@{keyToDecrypt}";
+            return $"{newMessage!.Id}@{keyToDecrypt!}";
         }
 
         public async Task<string> DeleteAndDecryptMessage(MessageViewModel model)
         {
             var messageEntityInDb =
-                await _dbContext.Message.FirstOrDefaultAsync(f => f.Id == model.MessageId);
-            if (messageEntityInDb == null)
+                await _dbContext.Message.FirstOrDefaultAsync(f => f.Id == model.MessageId!);
+            if (messageEntityInDb is null)
             {
-                return "Brak wiadomości o tym ID bądź nieprawidłowy klucz!";
+                return "No message with given ID or wrong key!";
             }
 
             string decryptedMessage;
@@ -54,7 +54,7 @@ namespace PrivsXYZ.MVC.Services
             }
             catch (Exception)
             {
-                return "Brak wiadomości o tym ID bądź nieprawidłowy klucz!";
+                return "No message with given ID or wrong key!";
             }
 
             try
@@ -71,8 +71,8 @@ namespace PrivsXYZ.MVC.Services
             catch (Exception)
             {
                 return
-                    "Wystąpił błąd podczas próby usunięcia wiadomości po jej odczytaniu z bazy danych." +
-                    " Spróbuj ponownie.";
+                    "Message was successfully decrypted, but error has occured when deleting this message from database." +
+                    "Try refresh page to read and delete message.";
             }
         }
 
@@ -83,10 +83,10 @@ namespace PrivsXYZ.MVC.Services
             string encryptedString;
             using (Aes encryptor = Aes.Create())
             {
-                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(encryptionKey, salt);
+                Rfc2898DeriveBytes pdb = new(encryptionKey, salt);
                 encryptor.Key = pdb.GetBytes(32);
                 encryptor.IV = pdb.GetBytes(16);
-                using (MemoryStream ms = new MemoryStream())
+                using (MemoryStream ms = new())
                 {
                     using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(),
                         CryptoStreamMode.Write))
@@ -116,7 +116,7 @@ namespace PrivsXYZ.MVC.Services
                         CryptoStreamMode.Write))
                     {
                         await cs.WriteAsync(cipherBytes, 0, cipherBytes.Length);
-                        //cs.Close();
+                        cs.Close();
                     }
                     decryptedText = Encoding.Unicode.GetString(ms.ToArray());
                 }

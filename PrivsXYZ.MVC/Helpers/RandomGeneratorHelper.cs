@@ -6,22 +6,26 @@
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             var stringChars = new char[length];
-            var random = new Random();
+            Random random = new();
 
             for (int i = 0; i < stringChars.Length; i++)
             {
                 stringChars[i] = chars[random.Next(chars.Length)];
             }
 
-            var finalString = new String(stringChars);
+            string finalString = new(stringChars);
             return finalString;
         }
 
         public static byte[] GetRandomSalt(int sizeInBytes)
         {
-            Random rnd = new Random();
+            Random rnd = new();
             byte[] b = new byte[sizeInBytes];
             rnd.NextBytes(b);
+            do
+            {
+                rnd.NextBytes(b);
+            } while (b.Length > 0);
             return b;
         }
     }
