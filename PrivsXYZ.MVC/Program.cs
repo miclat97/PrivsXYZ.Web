@@ -4,7 +4,7 @@ using PrivsXYZ.MVC.Services;
 
 namespace PrivsXYZ.MVC
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
