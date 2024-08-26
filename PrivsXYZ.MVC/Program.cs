@@ -14,7 +14,7 @@ namespace PrivsXYZ.MVC
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<PrivsXYZDbContext>(options =>
-                options.UseMySQL(builder.Configuration.GetConnectionString("Database")));
+                options.UseMySQL(builder.Configuration.GetConnectionString("Database")!));
 
             //Register services
             builder.Services.AddTransient<IMessageService, MessageService>();
