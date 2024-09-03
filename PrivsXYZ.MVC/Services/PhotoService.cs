@@ -54,7 +54,7 @@ namespace PrivsXYZ.MVC.Services
                     aes.IV = ivBytes;
                     using (var cs = new CryptoStream(stream, aes.CreateEncryptor(), CryptoStreamMode.Write))
                     {
-                        cs.Write(bytes, 0, bytes.Length);
+                        await cs.WriteAsync(bytes, 0, bytes.Length);
                     }
                     encrypted = stream.ToArray();
                 }
@@ -70,7 +70,7 @@ namespace PrivsXYZ.MVC.Services
             {
                 string password = key;
                 string saltString = Convert.ToBase64String(salt);
-                Rfc2898DeriveBytes keyDerivationFunction = new Rfc2898DeriveBytes(password, salt, 10000);
+                Rfc2898DeriveBytes keyDerivationFunction = new(password, salt, 10000);
                 byte[] keyBytes = keyDerivationFunction.GetBytes(32);
                 byte[] ivBytes = keyDerivationFunction.GetBytes(16);
                 using (var aes = Aes.Create())
@@ -79,15 +79,15 @@ namespace PrivsXYZ.MVC.Services
                     aes.IV = ivBytes;
                     using (var cs = new CryptoStream(stream, aes.CreateDecryptor(), CryptoStreamMode.Write))
                     {
-                        cs.Write(bytes, 0, bytes.Length);
+                        await cs.WriteAsync(bytes, 0, bytes.Length);
                     }
                     decrypted = stream.ToArray();
                 }
                 return decrypted;
             }
         }
-        
-        public async Task<byte[]> DeleteAndDecryptPhoto(string photoId, string key)
+
+        public async Task<byte[]?> DeleteAndDecryptPhoto(string photoId, string key)
         {
             string[] photoIdAndKey = photoId.Split('@');
             if (photoIdAndKey.Length != 2)
@@ -103,8 +103,8 @@ namespace PrivsXYZ.MVC.Services
             {
                 return null;
             }
-            byte[] salt = Convert.FromBase64String(photoEntityInDb.Salt);
-            
+            byte[] salt = Convert.FromBase64String(photoEntityInDb.Salt!);
+
             var decryptedPhoto = await Decrypt(photoEntityInDb.Photo!, salt, key);
             _dbContext.Photo.Remove(photoEntityInDb);
             await _dbContext.SaveChangesAsync();

@@ -4,6 +4,6 @@ namespace PrivsXYZ.MVC.Services
 {
     public interface IClientInfoService
     {
-        public ClientInfoModel GetUserData();
+        public ClientInfoModel? GetUserData();
     }
 }

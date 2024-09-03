@@ -26,13 +26,13 @@ namespace PrivsXYZ.MVC.Controllers
         }
 
         [HttpPost("SendMessage")]
-        public async Task<IActionResult> SendMessage(MessageSendModel messageModel)
+        public async Task<IActionResult> SendMessage(MessageSendModel messageModel, ClientInfoModel userData)
         {
             try
             {
-                var userData = _clientInfoService.GetUserData();
-                messageModel.SenderIPv4Address = userData.IPv4;
-                messageModel.SenderHostname = userData.Hostname;
+                ClientInfoModel? senderData = _clientInfoService.GetUserData();
+                messageModel.SenderIPv4Address = userData?.IPv4;
+                messageModel.SenderHostname = userData?.Hostname;
 
                 var endOfLink = await _messageService.CreateAndEncryptMessage(messageModel);
 
@@ -49,10 +49,10 @@ namespace PrivsXYZ.MVC.Controllers
         [HttpGet("IP")]
         public IActionResult Ip()
         {
-            var userData = _clientInfoService.GetUserData();
+            ClientInfoModel? userData = _clientInfoService.GetUserData();
 
-            ViewBag.ipv4 = userData.IPv4;
-            ViewBag.host = userData.Hostname;
+            ViewBag.ipv4 = userData?.IPv4;
+            ViewBag.host = userData?.Hostname;
 
             return View();
         }
