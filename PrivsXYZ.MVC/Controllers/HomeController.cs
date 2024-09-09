@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PrivsXYZ.MVC.Helpers;
 using PrivsXYZ.MVC.Models;
 using PrivsXYZ.MVC.Services;
@@ -16,6 +17,8 @@ namespace PrivsXYZ.MVC.Controllers
             _clientInfoService = clientInfoService;
         }
 
+        [AllowAnonymous]
+        [AutoValidateAntiforgeryToken]
         public async Task<IActionResult> Index()
         {
             var salt = RandomGeneratorHelper.GetRandomSalt(256);
@@ -25,6 +28,8 @@ namespace PrivsXYZ.MVC.Controllers
             return View();
         }
 
+        [AllowAnonymous]
+        [AutoValidateAntiforgeryToken]
         [HttpPost("SendMessage")]
         public async Task<IActionResult> SendMessage(MessageSendModel messageModel, ClientInfoModel userData)
         {
@@ -46,6 +51,8 @@ namespace PrivsXYZ.MVC.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [AutoValidateAntiforgeryToken]
         [HttpGet("IP")]
         public IActionResult Ip()
         {
