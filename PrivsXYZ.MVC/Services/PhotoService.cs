@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Crypto.Paddings;
 using PrivsXYZ.MVC.Database;
 using PrivsXYZ.MVC.Database.Entites;
 using PrivsXYZ.MVC.Helpers;
@@ -19,9 +18,9 @@ namespace PrivsXYZ.MVC.Services
 
         public async Task<string> CreateAndEncryptPhoto(PhotoSendModel model)
         {
-            string keyToDecrypt = RandomGeneratorHelper.RandomString(30); //length of key string in URL
+            string keyToDecrypt = RandomGeneratorHelper.RandomString();
 
-            var salt = RandomGeneratorHelper.GetRandomSalt(256);
+            var salt = RandomGeneratorHelper.GetRandomSalt();
 
             PhotoEntity newPhoto = new PhotoEntity()
             {

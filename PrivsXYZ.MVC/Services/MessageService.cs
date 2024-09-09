@@ -19,9 +19,9 @@ namespace PrivsXYZ.MVC.Services
 
         public async Task<string> CreateAndEncryptMessage(MessageSendModel model)
         {
-            string keyToDecrypt = RandomGeneratorHelper.RandomString(30); //length of key string in URL
+            string keyToDecrypt = RandomGeneratorHelper.RandomString(); //length of key string in URL
 
-            var salt = RandomGeneratorHelper.GetRandomSalt(256);
+            var salt = RandomGeneratorHelper.GetRandomSalt();
 
             MessageEntity newMessage = new()
             {

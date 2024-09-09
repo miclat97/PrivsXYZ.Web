@@ -21,7 +21,7 @@ namespace PrivsXYZ.MVC.Controllers
         [AutoValidateAntiforgeryToken]
         public async Task<IActionResult> Index()
         {
-            var salt = RandomGeneratorHelper.GetRandomSalt(256);
+            var salt = RandomGeneratorHelper.GetRandomSalt();
             var enc = await _messageService.Encrypt("test test test", salt, "12345678901234567890123456789011");
             ViewBag.Test = enc;
             ViewBag.Dec = await _messageService.Decrypt(enc, salt, "12345678901234567890123456789011");

@@ -1,32 +1,23 @@
-﻿namespace PrivsXYZ.MVC.Helpers
+﻿using System.Security.Cryptography;
+
+namespace PrivsXYZ.MVC.Helpers
 {
     public static class RandomGeneratorHelper
     {
-        public static string RandomString(int length)
+        public static string RandomString()
         {
-            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            var stringChars = new char[length];
-            Random random = new();
-
-            for (int i = 0; i < stringChars.Length; i++)
-            {
-                stringChars[i] = chars[random.Next(chars.Length)];
-            }
-
-            string finalString = new(stringChars);
-            return finalString;
+            var randomNumberGenerator = RandomNumberGenerator.Create();
+            var bytes = new byte[128 / 8];
+            randomNumberGenerator.GetBytes(bytes);
+            return bytes.ToString()!;
         }
 
-        public static byte[] GetRandomSalt(int sizeInBytes)
+        public static byte[] GetRandomSalt()
         {
-            Random rnd = new();
-            byte[] b = new byte[sizeInBytes];
-            rnd.NextBytes(b);
-            do
-            {
-                rnd.NextBytes(b);
-            } while (b.Length > 0);
-            return b;
+            var randomNumberGenerator = RandomNumberGenerator.Create();
+            var bytes = new byte[128 / 8];
+            randomNumberGenerator.GetBytes(bytes);
+            return bytes;
         }
     }
 }
